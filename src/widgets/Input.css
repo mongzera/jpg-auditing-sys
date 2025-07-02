@@ -1,0 +1,21 @@
+.jinput{
+
+}
+
+.jinput input{
+    border: 0;
+    outline: none;
+    border-bottom: 0.5px solid #FF0000;
+}
+
+.jinput-100 input{
+    width: 100px !important;
+}
+
+.jinput-200 input{
+    width: 200px !important;
+}
+
+.jinput-300 input{
+    width: 300px !important;
+}

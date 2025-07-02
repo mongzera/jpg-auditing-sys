@@ -1,0 +1,83 @@
+.current-view{
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    overflow-y: scroll;
+    padding: 50px;
+}
+
+.border-top-grey{
+    border-top: 0.5px solid grey;
+}
+
+.box{
+    width: 15px;
+    height: 15px;
+    display: block;
+}
+
+.red{
+    background-color: red;
+}
+
+.green{
+    background-color: green;
+}
+
+.jtable{
+    padding: 25px 50px 0px 50px !important;
+    width: 100% !important;
+}
+
+.jtable th{
+    margin: 5px;
+    min-width: 100px;
+    font-size: 1.5rem;
+    padding: 5px;
+}
+
+.jtable thead{
+    border-bottom: 1px solid #000;
+}
+
+.jtable tbody tr{
+    border-bottom: 0.5px solid rgb(173, 173, 173);
+}
+
+
+.jgrid{
+    width: 100% !important;
+    height: 100% !important;
+    display: inline-grid;
+    gap: 25px;
+    grid-template-columns: auto auto auto;
+}
+
+.jcard{
+    background-color: #FFF;
+    border-radius: 5px;
+    width: 100%;
+    padding: 15px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.jcard-small{
+    min-width: 200px;
+}
+
+.jcard-medium{
+    min-width: 300px;
+}
+
+.jcard-large{
+    min-width: 600px;
+    
+}
+
+.jcard-header h1, .jcard-header h2,.jcard-header h3,.jcard-header h4,.jcard-header h5,.jcard-header h6,.jcard-header p{
+    color: #000  !important;
+}
+
+.jcard-content h1,.jcard-content h2,.jcard-content h3,.jcard-content h4,.jcard-content h5,.jcard-content h6, .jcard-content p{
+    color: #2b2b2b !important;
+}

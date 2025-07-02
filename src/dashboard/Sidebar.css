@@ -1,0 +1,78 @@
+.side-bar{
+    width: 300px;
+    max-width: 300px;
+    min-width: 300px;
+    height: 100vh;
+    background: linear-gradient(-90deg, rgb(175, 63, 35), rgb(129, 31, 6));
+    transition-duration: 0.25s;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+    top: 0px;
+    left: 0px;
+}
+
+.side-bar-close{
+    margin-left: -250px;
+}
+
+.side-bar-toggle{
+    font-size: 25px;
+}
+
+.side-bar h1,.side-bar h2,.side-bar h3,.side-bar h4,.side-bar h5,.side-bar h6,.side-bar i,.side-bar p{
+    color: #FFF;
+}
+
+.side-bar hr{
+    border-top: 1px solid #FFF;
+}
+
+.profile{
+    font-size: 50px;
+}
+
+.navigation{
+    margin-top: 50px;
+}
+
+.navigation .side-bar-nav{
+    color: #FFF;
+    text-decoration: none;
+    margin: 5px 0px 5px 0px;
+    border-bottom: 1px transparent;
+    padding: 15px;
+    vertical-align: middle;
+    border-left: 5px solid rgba(0, 0, 0, 0.0);
+}
+
+.active-nav{
+    border-left: 5px solid #FFF !important;
+}
+
+/*
+.active-nav{
+    background-color: #FFF !important;
+    color: #FF0000 !important;
+    box-shadow: inset 0px 0px 15px rgba(0, 0, 0, 0.2);
+}*/
+
+.footer{
+
+}
+
+.footer h1{
+
+}
+
+.footer .logo{
+    object-fit: cover;
+    width: 50%;
+}
+
+.footer h6{
+    margin: 0px;
+}
+
+.footer p{
+    margin: 0px;
+    font-size: 0.75rem;
+}

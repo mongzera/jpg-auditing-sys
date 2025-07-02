@@ -1,0 +1,5 @@
+.background{
+    height: 100vh !important; 
+    width: 100vw !important;
+    background: linear-gradient(-90deg, #fafafa, #e8e8e8);
+}

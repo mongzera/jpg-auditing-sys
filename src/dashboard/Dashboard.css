@@ -1,0 +1,27 @@
+.dashboard{
+  background: linear-gradient(-90deg, #fafafa, #e8e8e8);
+}
+
+.weight-400{
+  font-weight: 400;
+}
+
+.weight-500{
+  font-weight: 500;
+}
+
+.weight-600{
+  font-weight: 600;
+}
+
+.weight-700{
+  font-weight: 700;
+}
+
+.weight-800{
+  font-weight: 800;
+}
+
+.weight-900{
+  font-weight: 900;
+}

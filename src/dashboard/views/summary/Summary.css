@@ -1,0 +1,35 @@
+.recent-transactions{
+    margin: 25px 0px 0px 0px;
+    padding: 50px;
+    border-radius: 5px;
+    background-color: #FFF;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.collapsible-drawer{
+    
+}
+
+.darken-drawer{
+    background-color: #f0f0f0;
+}
+
+.close{
+    max-height: 0px;
+    overflow: hidden;
+}
+
+td h6{
+    margin: 0px;
+}
+
+th, td{
+    max-width: 300px !important;
+}
+
+.truncate {
+  width: 85%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
