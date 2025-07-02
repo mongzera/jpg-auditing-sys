@@ -65,7 +65,7 @@
 
 .footer .logo{
     object-fit: cover;
-    width: 50%;
+    width: 25% !important;
 }
 
 .footer h6{
