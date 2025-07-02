@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './Summary.css'
 import { supabase } from '../../../supabase';
 import { getUserOrgData } from '../../../utils/user-util';
@@ -92,7 +92,10 @@ function Summary(){
                         <tbody>
                             {
                                 recentTransactions?.map( (item : TransactionLog)=> {
-                                    return <RecentTransaction {...item}/>
+                                    return <>
+                                        <RecentTransaction {...item}/>
+                                        
+                                    </>
                                 })
                             }
                         </tbody>
@@ -128,25 +131,84 @@ export interface TransactionLog{
 function RecentTransaction( props : TransactionLog){
 
     const [expanded, setExpanded] = useState<boolean>(false);
+    const divRef = useRef<HTMLDivElement>(null);
     // const id = props.values.id;
     // const desc = props.values.description;
     // const type = props.values.type;
     // const amount : number = parseFloat(props.values.amount);
     // const date = props.values.date;
 
+    useEffect( ()=>{
+        if(!divRef.current) return;
+
+        if(expanded) divRef.current!.style.height = divRef.current?.scrollHeight + 150 + 'px';
+        else divRef.current!.style.height = '0px';
+    }, [expanded]);
+
     return (
          <>
             <tr >
-                <td ><h6 className={(expanded ? 'poppins-bold' : 'truncate')}>{props.description}</h6></td>
-                <td className={expanded ? 'poppins-bold' : ''} >PHP {props.amount.toFixed(2)}</td>
-                <td className={expanded ? 'poppins-bold' : ''} >{props.created_at.split('T')[0]}</td> 
+                <td ><h6 className={''}>{props.description}</h6></td>
+                <td className='' >PHP {props.amount.toFixed(2)}</td>
+                <td className='' >{props.created_at.split('T')[0]}</td> 
                 <td><i className={'bi bi-chevron-' + (expanded ? 'up' : 'down')} onClick={()=>{setExpanded(!expanded)}}></i></td>
             </tr>
 
             {/* Collapsible draw for transaction entries*/}
             <tr>
                 <td colSpan={4}>
-                    <div className={"w-100 px-5 collapsible-drawer " + (expanded ? 'darken-drawer' : 'close')}>
+
+                    <div ref={divRef} className={"d-flex flex-column justify-content-center w-100 px-5 collapsible-drawer "+ (expanded ? 'darken-drawer' : '')}>
+                        <div className="d-flex flex-row mb-4">
+                            <div className="d-flex w-50 ">
+                                <h6>Account Name</h6>
+                            </div>
+                            <div className="d-flex flex-row justify-content-between align-items-center w-50">
+                                <div className='d-flex w-50 justify-content-center'>
+                                    <h6>Debit</h6>
+                                </div>
+                                <div className='d-flex w-50 justify-content-center'>
+                                    <h6>Credit</h6>
+                                </div>
+                            </div>
+                        </div>
+
+                        {props.entry.map((entry) => {
+                            return (
+                                <>
+                                    <div className="d-flex flex-row">
+                                        <div className="d-flex w-50">
+                                            <p className='m-0'>{entry.account_name}</p>
+                                        </div>
+                                        <div className="d-flex flex-row justify-content-between align-items-center w-50">
+                                            <div className='d-flex w-50 justify-content-center'>
+                                                <p className='m-0'>{entry.entry==='DEBIT' ? 'PHP ' + entry.amount.toFixed(2) : '-'}</p>
+                                            </div>
+                                            <div className='d-flex w-50 justify-content-center'>
+                                                <p className='m-0'>{entry.entry==='CREDIT' ? 'PHP ' + entry.amount.toFixed(2) : '-'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            )
+                        })}
+                        <hr className='m-0 p-0'/>
+                        <div className="d-flex flex-row">
+                            <div className="d-flex w-50">
+                                <h6 className='m-0'>Balance</h6>
+                            </div>
+                            <div className="d-flex flex-row justify-content-between align-items-center w-50">
+                                <div className='d-flex w-50 justify-content-center'>
+                                    <p className='m-0'>PHP {props.amount.toFixed(2)}</p>
+                                </div>
+                                <div className='d-flex w-50 justify-content-center'>
+                                    <p className='m-0'>PHP {props.amount.toFixed(2)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* <div className={"w-100 px-5 collapsible-drawer " + (expanded ? 'darken-drawer' : 'close')}>
                         <table className='w-100'>
                             <thead>
                                 <tr >
@@ -168,11 +230,19 @@ function RecentTransaction( props : TransactionLog){
                                         </>
                                     );
                                 })}
+                                <tr>
+                                    <td style={{textAlign:'left'}}><b>Balance:</b> </td>
+                                    <td style={{textAlign:'center'}}><b>PHP {props.amount.toFixed(2)}</b></td>
+                                    <td style={{textAlign:'center'}}><b>PHP {props.amount.toFixed(2)}</b></td>
+                                    <td></td>
+                                </tr>
                             </tbody>
                         </table>
-                    </div>
+                    </div> */}
                 </td>
             </tr>
+            
+            
          </>
     );
 }

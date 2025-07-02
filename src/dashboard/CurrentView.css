@@ -40,8 +40,9 @@
     border-bottom: 1px solid #000;
 }
 
-.jtable tbody tr{
-    border-bottom: 0.5px solid rgb(173, 173, 173);
+.jtable tbody tr td h6{
+    padding: 15px 0px 0px 0px !important;
+    
 }
 
 

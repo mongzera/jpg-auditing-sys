@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchOrganizationAccountsTypes, getOrganizationAccounts, type OrganizationAccount } from "../../../utils/organization-utils";
-import type { TransactionUIProp } from "../transactions/Transactions";
 import type { TransactionLog } from "./Summary";
+import { getOrganizationAccounts } from "../../../utils/organization-utils";
 
 interface SummarizeAccountProp{
     title : string,
