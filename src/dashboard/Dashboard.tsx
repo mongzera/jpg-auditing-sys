@@ -10,12 +10,14 @@ import CreateOrganization from './views/CreateOrganization'
 import OrganizationSettings from './views/organization_settings/OrganizationSettings'
 import Transactions from './views/transactions/Transactions'
 import { fetchOrganizationAccountsTypes } from '../utils/organization-utils'
+import GenerateReport from './views/generate_report/GenerateReport'
 
 const viewObject = {
   summary : {label : "Summary", view : <Summary/>},
   cashflow : {label : "Transaction", view : <Transactions />},
   collections : {label : "Collections", view : <Collections />},
   accounts : {label : "Accounts", view : <Accounts />},
+  generate_reports : {label : "Generate Reports", view : <GenerateReport/>},
   organization_settings : {label : "Organization Settings", view : <OrganizationSettings/>}
 }
 

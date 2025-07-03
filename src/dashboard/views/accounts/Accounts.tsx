@@ -62,7 +62,7 @@ function Accounts(){
             let balance = organizationAccountBalances?.find((accountBalance)=>accountBalance.account_name === item.account_name)?.account_balance ?? 0;
 
             return (
-                <tr>
+                <tr style={{backgroundColor : (balance === 0 ?  "#FFF" : "rgb(255, 243, 243)")}}>
                     <td>{item.account_name}</td>
                     <td>{item.account_type}</td>
                     <td>{item.account_normal_balance}</td>
@@ -192,7 +192,7 @@ function Accounts(){
                 </div>
                  
                 <div className="jcard jcard-large p-4" style={{gridColumnStart:1, gridColumnEnd:4, gridRowStart:2, gridRowEnd:2}}>
-                    <div className="jcard-header d-flex flex-row justify-content-between align-items-center py-4">
+                    <div className="jcard-header d-flex flex-row justify-content-between align-items-center">
                         <h6>Chart of Accounts</h6>
                         <button className='btn btn-secondary' onClick={()=>{newAccountNameRef.current = ""; newAccountTypeRef.current = ""; setDisplayNewOrgAccountModal(true)}}>Create Account</button>
                     </div>
@@ -212,6 +212,8 @@ function Accounts(){
                         </table>
                     </div>
                 </div>
+
+             
             </div>
             
         </>
