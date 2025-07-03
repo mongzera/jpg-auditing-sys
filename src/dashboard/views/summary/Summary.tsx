@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import './Summary.css'
 import { supabase } from '../../../supabase';
 import { getUserOrgData } from '../../../utils/user-util';
-import { getOrganizationAccounts } from '../../../utils/organization-utils';
+import { fetchOrganizationTransactions, getOrganizationAccounts, type TransactionLog } from '../../../utils/organization-utils';
 import SummarizeAccounts from './SummarizeAccounts';
 
 
@@ -12,39 +12,10 @@ function Summary(){
 
     useEffect( ()=>{
         const fetchAll = async() => {
-            
-            const {data, error} = await supabase.from('tb_transaction_log').select('*, entry:tb_transaction_entries(id, account, entry, amount)').eq('organization_uuid', getUserOrgData()?.organization_id);
-        
-            if(error){
-                alert(error.message);
-                return;
-            }
-
-            console.log(data);
-
-            const orgChartOfAccounts = getOrganizationAccounts();
-
-            const formattedTransactionLogs = data.map((item)=>{
-                const formattedItem = item as TransactionLog
-
-                //only count one side entry [debit] since both must be equal
-                let amount = 0;
-                formattedItem.entry.forEach((transact_entry)=>{
-                    const org_account = orgChartOfAccounts?.find(item=>item.uuid === transact_entry.account);
-
-                    transact_entry.account_type = org_account?.account_type ?? "NULL";
-                    transact_entry.account_name = org_account?.account_name ?? "NULL"
-                    if(transact_entry.entry === 'DEBIT') amount += transact_entry.amount;
-                });
-
-                formattedItem.amount = amount;
-
-                return formattedItem;
-            });
-
+            const formattedTransactionLogs = await fetchOrganizationTransactions();
             setRecentTransactions(formattedTransactionLogs);
         }
-
+            
         fetchAll();
     }, []); 
 
@@ -111,22 +82,7 @@ function Summary(){
 
 export default Summary;
 
-interface TransactionEntry{
-    id : string,
-    account : string,
-    account_type : string,
-    entry : string,
-    amount : number,
-    account_name : string
-}
 
-export interface TransactionLog{
-    id : string,
-    description : string,
-    amount : number,
-    created_at : string,
-    entry : TransactionEntry[]
-}
 
 function RecentTransaction( props : TransactionLog){
 
@@ -173,7 +129,7 @@ function RecentTransaction( props : TransactionLog){
                             </div>
                         </div>
 
-                        {props.entry.map((entry) => {
+                        {props.entries.map((entry) => {
                             return (
                                 <>
                                     <div className="d-flex flex-row">

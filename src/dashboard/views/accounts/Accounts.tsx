@@ -6,9 +6,16 @@ import Input from '../../../widgets/Input';
 import Select from '../../../widgets/Select';
 import { supabase } from '../../../supabase';
 import { getUserOrgData } from '../../../utils/user-util';
-import { fetchOrganizationAccountsTypes, getGeneralAccounts, getOrganizationAccounts, type GeneralAccounts, type OrganizationAccount } from '../../../utils/organization-utils';
+import { fetchOrganizationAccountsTypes, fetchOrganizationTransactions, getGeneralAccounts, getOrganizationAccounts, type GeneralAccounts, type OrganizationAccount, type TransactionLog } from '../../../utils/organization-utils';
 
 //in this case -> OrganizationAccount = Chart of Accounts
+
+interface OrganizationAccountBalance{
+    account_name : string,
+    account_type : string,
+    account_balance : number;
+    account_normal_balance : string
+}
 
 function Accounts(){
     const newAccountNameRef = useRef<string>("");
@@ -16,17 +23,29 @@ function Accounts(){
 
     const [displayNewOrgAccountModal, setDisplayNewOrgAccountModal] = useState<boolean>(false)
     const [organizationAccounts, setOrganizationAccounts] = useState<OrganizationAccount[] | null>([]);
+    const [organizationTransactions, setOrganizationTransactions] = useState<TransactionLog[] | undefined>([]);
+    const [organizationAccountBalances, setOrganizationAccountBalances] = useState<OrganizationAccountBalance[] | undefined>([]);
     const [accountTypes, setAccountTypes] = useState<GeneralAccounts[] | null>([]);
     const [accountTypeNames, setAccountTypeNames] = useState<string[] | null>([]);
     const [reload, setReload] = useState(0);
 
     const generalAccounts = () => {
+
         return accountTypes?.map( (item)=> {
+            let balance = 0;
+
+            organizationAccountBalances?.forEach((accountBalance) => {
+
+                //if organization account type is this particular general account name then
+                //add the balance...
+                if(accountBalance.account_type === item.account_name) balance += accountBalance.account_balance;
+            });
+
             return (
                 <tr>
                     <td>{item.account_name}</td>
-                    <td style={{textAlign:'left'}}>{item.account_entry}</td>
-                    <td>PHP {(Math.random() * 10000 + 4000).toFixed(2)}</td>
+                    <td style={{textAlign:'left'}}>{item.account_normal_balance}</td>
+                    <td>PHP {balance.toFixed(2)}</td>
                 </tr>
             )
             
@@ -39,12 +58,15 @@ function Accounts(){
         const accounts = organizationAccounts;
 
         return accounts?.map( (item)=> {
+
+            let balance = organizationAccountBalances?.find((accountBalance)=>accountBalance.account_name === item.account_name)?.account_balance ?? 0;
+
             return (
                 <tr>
                     <td>{item.account_name}</td>
                     <td>{item.account_type}</td>
-                    <td>{item.account_entry}</td>
-                    <td>PHP {((Math.random() * 5000 + 5000).toFixed(2))}</td>
+                    <td>{item.account_normal_balance}</td>
+                    <td>PHP {balance.toFixed(2)}</td>
                 </tr>
             )
             
@@ -96,9 +118,32 @@ function Accounts(){
         await fetchOrganizationAccountsTypes();
 
         const generalAccounts = getGeneralAccounts();
+        const formattedTransactionLogs = await fetchOrganizationTransactions();
+        const organizationAccountBalances : OrganizationAccountBalance[] = [];
+        formattedTransactionLogs?.forEach((transactionLog) => {
+            transactionLog.entries.forEach( (entry) => {
+                let accountBalance = organizationAccountBalances.find((balance)=>balance.account_name === entry.account_name);
+
+                if(!accountBalance) {
+                    accountBalance = {
+                        account_name : entry.account_name,
+                        account_normal_balance : entry.account_normal_balance,
+                        account_type : entry.account_type,
+                        account_balance : (entry.entry === entry.account_normal_balance) ? entry.amount : -entry.amount
+                    }
+
+                    organizationAccountBalances.push(accountBalance);
+                }else{
+                    accountBalance.account_balance += (entry.entry === entry.account_normal_balance) ? entry.amount : -entry.amount;
+                }
+            });
+        });
+        
 
         setAccountTypes(generalAccounts);
         setAccountTypeNames(generalAccounts?.map( (item) => item.account_name) ?? []);
+        setOrganizationTransactions(formattedTransactionLogs);
+        setOrganizationAccountBalances(organizationAccountBalances);
 
         const organizationAccounts = getOrganizationAccounts();
         

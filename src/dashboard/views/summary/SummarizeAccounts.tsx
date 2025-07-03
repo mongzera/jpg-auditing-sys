@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import type { TransactionLog } from "./Summary";
-import { getOrganizationAccounts } from "../../../utils/organization-utils";
+import { getOrganizationAccounts, type TransactionLog } from "../../../utils/organization-utils";
 
 interface SummarizeAccountProp{
     title : string,
@@ -30,9 +29,11 @@ function SummarizeAccounts(props : SummarizeAccountProp){
             return;
         }
 
+        console.log('TRANSACTIONS: ', transactions);
+
         transactions?.forEach((transaction)=>{
             
-            transaction.entry.forEach((entry)=>{
+            transaction.entries.forEach((entry)=>{
                 
                 if(entry.account_type === account_type){
                     //find if entry account name exists in accounts
@@ -43,7 +44,7 @@ function SummarizeAccounts(props : SummarizeAccountProp){
                     }
                     
                     else{
-                        const normal_balance = organizationAccounts!.find((orgAccount)=>orgAccount.account_name === entry.account_name)?.account_entry ?? 'NULL';
+                        const normal_balance = organizationAccounts!.find((orgAccount)=>orgAccount.account_name === entry.account_name)?.account_normal_balance ?? 'NULL';
 
                         accounts.push({
                             account_name : entry.account_name,

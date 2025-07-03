@@ -328,9 +328,9 @@ const ExpenseEntryComponent = () => {
             <div className="jcard jcard-large" style={{gridColumnStart:1, gridColumnEnd:4, gridRowStart:2, gridRowEnd:2}}>
                 <div className="jcard-header d-flex flex-row justify-content-between align-items-center">
                     <h6>Create Expense Entry</h6>
-                    <div className="d-flex flex-row align-items-center justify-content-around w-25">
-                        <button className={'btn btn-danger ' + (hasExpenseAccount ? 'disabled' : '')} onClick={(e)=>{toggleExpenseModal()}}>Set Expense Account</button>
-                        <button className='btn btn-secondary' onClick={(e)=>{togglePaidWithModal()}}>Add Paid With</button>
+                    <div className="d-flex flex-row align-items-center justify-content-end w-50">
+                        <button className={'btn btn-danger mx-2' + (hasExpenseAccount ? 'disabled' : '')} onClick={(e)=>{toggleExpenseModal()}}>Set Expense Account</button>
+                        <button className='btn btn-secondary mx-2' onClick={(e)=>{togglePaidWithModal()}}>Add Paid With</button>
                     </div>
                 </div>
                 <div className="jcard-content my-5">
