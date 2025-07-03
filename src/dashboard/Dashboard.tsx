@@ -14,9 +14,9 @@ import GenerateReport from './views/generate_report/GenerateReport'
 
 const viewObject = {
   summary : {label : "Summary", view : <Summary/>},
-  cashflow : {label : "Transaction", view : <Transactions />},
-  collections : {label : "Collections", view : <Collections />},
   accounts : {label : "Accounts", view : <Accounts />},
+  collections : {label : "Collections", view : <Collections />},
+  cashflow : {label : "Transaction", view : <Transactions />},
   generate_reports : {label : "Generate Reports", view : <GenerateReport/>},
   organization_settings : {label : "Organization Settings", view : <OrganizationSettings/>}
 }
