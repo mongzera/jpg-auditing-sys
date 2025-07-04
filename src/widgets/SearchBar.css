@@ -1,0 +1,9 @@
+.search-bar-item{
+    background-color: #FFF;
+    margin: 0px;
+    padding: 15px;
+}
+
+.search-bar-item:hover{
+    background-color: lightgrey;
+}

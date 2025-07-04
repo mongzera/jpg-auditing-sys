@@ -11,9 +11,9 @@ function MemberCollectionStatus(props : MemberCollectionProp){
 
     return ( 
         <>
-            <tr style={{backgroundColor:(darken ? 'rgb(255, 243, 243)' : '')}}>
-                <td className="px-2"><p className="p-0 my-2">{name}</p></td>
-                {collection_status.map((isPaid)=>{ return <td ><span className="d-flex flex-row align-items-center w-100 justify-content-center"><input type="checkbox" defaultChecked={isPaid===true}/><p className="my-0 mx-2">Is Paid</p></span></td>})}
+            <tr className={darken ? "darken-row" : "white-row"}>
+                <td className={"sticky-col " + (darken ? "darken-row" : "white-row")}><p className="p-0 my-2">{name}</p></td>
+                {collection_status.map((isPaid)=>{ return <td ><span className="d-flex flex-row align-items-center w-100 justify-content-center"><p className={'member-payment-status ' + (isPaid ? 'member-paid' : 'member-unpaid')}>{isPaid ? 'OR No. 4123 - Paid' : 'Unpaid'}</p></span></td>})}
             </tr>
         </>
     );

@@ -1,7 +1,22 @@
+.member-payment-status{
+    border-radius: 5px;
+    padding: 2px 5px 2px 5px;
+    margin: 0px;
+}
+
+.member-paid{
+    background-color: #00FF00;
+}
+
+.member-unpaid{
+    background-color: #f0f0f0;
+}
+
 .slider{
     max-width: 100%;
     max-height: 80vh;
     overflow: scroll;
+    padding-left: 0px !important;
     padding-top: 0px !important;
 }
 
@@ -13,6 +28,21 @@
     box-shadow: inset 0 -1px 0 #ccc;
 }
 
+.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 1; /* keep it above other cells */
+  padding-left: 15px;
+}
+
+.darken-row{
+    background-color: rgb(255, 243, 243)
+}
+
+.white-row{
+    background-color: #FFF;
+}
+
 
 .slider thead tr th{
     position: relative;
@@ -20,4 +50,13 @@
     z-index: 2;
     padding: 0px !important;
     margin: 0px !important;
+}
+
+#member_name_input{
+    min-width: 500px;
+}
+
+.new-collection-table tbody tr td h6{
+    margin: 0px !important;
+    padding: 0px !important;
 }
