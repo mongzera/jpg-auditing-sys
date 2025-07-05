@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import Input from '../../../widgets/Input';
 import './OrganizationSettings.css'
-import { supabase } from '../../../supabase';
+import { fetchOrganizationMembers } from '../../../utils/organization-utils';
 import { getUserOrgData } from '../../../utils/user-util';
+import { supabase } from '../../../supabase';
+import Input from '../../../widgets/Input';
 
-interface Member{
+export interface Member{
+    id : string,
     first_name : string,
     last_name : string,
     middle_initial : string,
@@ -102,18 +104,6 @@ function OrganizationSettings(){
 
     useEffect(()=>{
 
-        const fetchMembers = async() => {
-            const org_uuid = await getUserOrgData()?.organization_id;
-            const {data : members, error} = await supabase.from('tb_organization_members').select('*').eq('organization_uuid', org_uuid);
-
-            if(error){
-                console.error(error.message);
-                return;
-            }
-
-            setCurrentMembers(members.map((m)=>m as Member));
-        }
-
         const enterHandler = (e : KeyboardEvent) => {
             if(e.key === 'Enter') addMember();
         }
@@ -121,7 +111,15 @@ function OrganizationSettings(){
         document.addEventListener('keydown', enterHandler);
 
         //request members
-        fetchMembers();
+        const fetchAll = async() => {
+            const members = await fetchOrganizationMembers();
+
+            if(!!members){
+                setCurrentMembers(members.map((m)=>m as Member));
+            }
+        }
+
+        fetchAll();
 
         return ()=>{document.removeEventListener('keydown', enterHandler)}
 
