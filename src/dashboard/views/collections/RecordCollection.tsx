@@ -73,6 +73,10 @@ function RecordCollection(){
         );
     }
 
+    const submitCollection = () => {
+        
+    }
+
     return (
         <>
             <div className="jcard" style={{gridColumnStart: 1, gridColumnEnd: 2, gridRowStart: 1, gridRowEnd: 1}}>
@@ -109,6 +113,9 @@ function RecordCollection(){
                                 {displayInputtedMembers()}
                             </tbody>
                         </table>
+                        <div className="submit w-100 d-flex justify-content-end mt-5">
+                            <button className="btn btn-danger" onClick={()=>{submitCollection()}}>Submit Collection</button>
+                        </div>
                     </div>
                 </div>
             </div>

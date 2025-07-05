@@ -4,6 +4,7 @@ interface InputProp{
     label:string,
     type:string,
     valueRef : React.RefObject<string>,
+    inputRef? : React.Ref<HTMLInputElement>
     className:string,
     id:string,
     onChange?:Function,
@@ -11,10 +12,10 @@ interface InputProp{
 }
 
 function Input(props:InputProp){
-    const {label, type, valueRef, className, id, onChange, isAutoComplete} = props;
+    const {label, type, valueRef, inputRef, className, id, onChange, isAutoComplete} = props;
     return  <div className={"jinput " + className}>
                 <h6>{label}</h6>
-                <input autoComplete={isAutoComplete ? 'on' : 'off'} id={id} className="w-100" type={type} onChange={(e)=>{ valueRef.current = e.target.value; if(!!onChange) onChange(e.target);}}/>
+                <input ref={inputRef} autoComplete={isAutoComplete ? 'on' : 'off'} id={id} className="w-100" type={type} onChange={(e)=>{ valueRef.current = e.target.value; if(!!onChange) onChange(e.target);}}/>
             </div>
 }
 
