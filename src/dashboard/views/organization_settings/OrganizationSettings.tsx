@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import './OrganizationSettings.css'
-import { fetchOrganizationMembers } from '../../../utils/organization-utils';
-import { getUserOrgData } from '../../../utils/user-util';
-import { supabase } from '../../../supabase';
 import Input from '../../../widgets/Input';
+import './OrganizationSettings.css'
+import { supabase } from '../../../supabase';
+import { getUserOrgData } from '../../../utils/user-util';
+import { fetchOrganizationMembers } from '../../../utils/organization-utils';
 
 export interface Member{
     id : string,

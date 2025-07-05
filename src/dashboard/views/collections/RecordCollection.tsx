@@ -24,7 +24,7 @@ interface MemberCollectionInstance{
 function RecordCollection(props : any){
     const {refresh, setRefresh} = props;
 
-    const collectionNameRef = useRef<string>("");
+    const collectionNameSelectRef = useRef<HTMLSelectElement>(null);
     const memberNameRef = useRef<string>("");
     const paymentMethodRef = useRef<string>("");
 
@@ -86,9 +86,15 @@ function RecordCollection(props : any){
     }
 
     const submitBatchPayments = async (paymentsArray : MemberCollectionInstance[]) => {
-        let org_uuid = getUserOrgData()!.organization_id;
-        let collectionUUID = currentOrganizationCollections?.find((collection)=>collection.collection_name === collectionNameRef.current)?.id
+        
+        //this one is faulty...
+        console.log('COL NAME REF: ' + collectionNameSelectRef.current);
+        let collectionUUID = currentOrganizationCollections?.find((collection)=>collection.collection_name === collectionNameSelectRef.current?.value)?.id ?? ''
 
+        if(!collectionUUID){
+            alert('Collection is invalid for some reason...');
+            return;
+        }
         
         const { data, error } = await supabase.rpc('submit_collection_payments', {
             _collection_uuid: collectionUUID,
@@ -125,6 +131,9 @@ function RecordCollection(props : any){
             membersForCollection.push(collectionInstance);
         });
 
+        //clear inputs
+        setMembersToBeCollected([]);
+
         submitBatchPayments(membersForCollection);
         
     }
@@ -155,7 +164,7 @@ function RecordCollection(props : any){
                     
                     <div className="d-flex justify-content-between align-items-center">
                         <h6>Record Collections</h6>
-                        <Select label={'Record for collection: '} choices={currentOrganizationCollections?.map((collection)=>collection.collection_name)} valueRef={collectionNameRef}/>
+                        <Select label={'Record for collection: '} choices={currentOrganizationCollections?.map((collection)=>collection.collection_name)} selectRef={collectionNameSelectRef}/>
                     </div>
                 </div>
                 <div className="jcard-content">
