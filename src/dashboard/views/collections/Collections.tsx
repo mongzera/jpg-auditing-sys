@@ -1,54 +1,62 @@
+import { useEffect, useState } from 'react';
 import Select from '../../../widgets/Select';
+import type { Member } from '../organization_settings/OrganizationSettings';
 import './Collections.css'
 import MemberCollectionStatus, { type MemberCollectionProp } from './MemberCollectionStatus';
 import RecordCollection from './RecordCollection';
+import { fetchCollections, fetchMemberCollectionStatus, fetchOrganizationMembers } from '../../../utils/organization-utils';
+import CreateCollection from './CreateCollection';
 
+export interface MemberCollectionPaymentStatus{
+    id : string,
+    member_uuid : string,
+    collection_uuid : string,
+    payment_method : string,
+    transaction_receipt : string
+}
 
+export interface OrganizationCollections{
+    id : string,
+    account_uuid : string,
+    collection_amount : number,
+    collection_name : string,
+    collection_description : string,
+}
 
 function Collections(){
-    let sampleCollectionNames = [
-        'Membership Fee',
-        'Karajan Collection',
-        'Pastoral Day Collection',
-        'Collection 1',
-        'Collection 1',
-        'Collection 1',
-        'Collection 1',
-    ]
 
-    let memberStatus : MemberCollectionProp[] = [];
-
-    for(let i = 0; i < 100; i++){
-        memberStatus.push({
-            name: 'Gamat, Ethan Van Q. ' + i,
-            darken : i % 2 === 0,
-            collection_status: sampleCollectionNames.map((item)=> (Math.floor(Math.random() * 1000) % 3 === 2) ? true : false)
-        
-        });
-    }
-
-    console.log(memberStatus);
+    const [currentMembers, setCurrentMembers] = useState<Member[] | undefined>([]);
+    const [memberCollectionPaymentStatus, setMemberCollectionPaymentStatus] = useState<MemberCollectionPaymentStatus[] | undefined>([]);
+    const [organizationCollections, setOrganizationCollections] = useState<OrganizationCollections[] | undefined>();
+    const [refresh, setRefresh] = useState(0);
 
     const collectionNames = () => {
-        return sampleCollectionNames.map((item)=>{
+        return organizationCollections?.map((item)=>{
     
-            return <th  style={{minWidth: '200px', textAlign: 'center'}}><h6>{item}</h6></th>
+            return <th  style={{minWidth: '200px', textAlign: 'center'}}><h6>{item.collection_name}</h6></th>
         });
     }
+
+    useEffect( ()=> {
+        const fetchAll = async()=>{
+            let members = await fetchOrganizationMembers();
+            let collections = await fetchCollections();
+            let memberCollectionPaymentStat = await fetchMemberCollectionStatus();
+
+            setCurrentMembers( members?.map( (member)=> member as Member))
+            setMemberCollectionPaymentStatus( memberCollectionPaymentStat?.map((stat)=> stat as MemberCollectionPaymentStatus));
+            setOrganizationCollections(collections?.map((collection)=>collection as OrganizationCollections));
+        }
+
+        fetchAll();
+    }, [refresh]);
 
     return (
         <>
             <div className="jgrid">
-                <RecordCollection/>
+                <RecordCollection refresh={refresh} setRefresh={setRefresh}/>
 
-                <div className="jcard" style={{gridColumnStart: 2, gridColumnEnd: 4, gridRowStart: 1, gridRowEnd: 1}}>
-                    <div className="jcard-header">
-                        <h6>Create New Collection</h6>
-                    </div>
-                    <div className="jcard-content">
-
-                    </div>
-                </div>
+                <CreateCollection refresh={refresh} setRefresh={setRefresh}/>
 
                 <div className="jcard slider" style={{gridColumnStart: 1, gridColumnEnd: 4, gridRowStart: 2, gridRowEnd: 2}}>
                     <table className='jtable w-100 mx-3'>
@@ -60,8 +68,8 @@ function Collections(){
                         </thead>
                         <tbody>
                             {
-                                memberStatus.map( (member) => {
-                                    return <MemberCollectionStatus darken={member.darken} name={member.name} collection_status={member.collection_status}/>
+                                currentMembers?.map( (member, index) => {
+                                    return <MemberCollectionStatus darken={(index % 2 === 0)} name={`${member.last_name}, ${member.first_name} ${member.middle_initial}.`} collections={organizationCollections} collection_status={memberCollectionPaymentStatus?.filter((status)=>status.member_uuid === member.id)}/>
                                 })
                             }
                         </tbody>

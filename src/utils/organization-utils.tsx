@@ -103,6 +103,42 @@ export const fetchOrganizationAccountsTypes = async () =>{
     console.log(organization_accounts);
 }
 
+export const fetchOrganizationMembers = async() => {
+    const org_uuid = await getUserOrgData()?.organization_id;
+    const {data : members, error} = await supabase.from('tb_organization_members').select('*').eq('organization_uuid', org_uuid);
+
+    if(error){
+        console.error(error.message);
+        return;
+    }
+
+    return members;
+}
+
+export const fetchCollections = async () => {
+    const org_uuid = await getUserOrgData()?.organization_id;
+    const {data : collections, error} = await supabase.from('tb_collections').select('*, tb_organization_account (*)').eq('tb_organization_account.organization_id', org_uuid);
+
+    if(error){
+        console.error(error.message);
+        return;
+    }
+
+    return collections;
+}
+
+export const fetchMemberCollectionStatus = async () => {
+    const org_uuid = await getUserOrgData()?.organization_id;
+    const {data : collection_status, error} = await supabase.from('tb_paid_members').select('*, tb_organization_members (*)').eq('tb_organization_members.organization_uuid', org_uuid);
+
+    if(error){
+        console.error(error.message);
+        return;
+    }
+
+    return collection_status;
+}
+
 export const getGeneralAccounts = () => {
     if(!sessionStorage.getItem(GENERAL_ACCOUNTS)) return null;
 
@@ -126,7 +162,7 @@ export const getOrganizationAccounts = () => {
         return item as OrganizationAccount;
     } );
 
-    return organization_account;
+    return organization_account ?? undefined;
 }
 
 
