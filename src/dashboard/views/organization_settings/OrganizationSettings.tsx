@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import Input from '../../../widgets/Input';
 import './OrganizationSettings.css'
-import { fetchOrganizationMembers } from '../../../utils/organization-utils';
-import { getUserOrgData } from '../../../utils/user-util';
 import { supabase } from '../../../supabase';
+import { getUserOrgData } from '../../../utils/user-util';
+import { fetchOrganizationMembers } from '../../../utils/organization-utils';
 
 export interface Member{
     id : string,
@@ -127,7 +128,50 @@ function OrganizationSettings(){
 
     return (
         <>
-            organization settings
+            <div className="jgrid">
+                <div className="jcard add-member" style={{gridColumnStart: 1, gridColumnEnd: 2, gridRowStart: 1, gridRowEnd: 1}}>
+                    <div className="jcard-header">
+                        <h6>Add Member</h6>
+                        <div className="add-member d-flex flex-row w-100 justify-content-between">
+                            <Input inputRef={fnRef} label={'Last Name'} type={'text'} valueRef={memberLastName} className={'w-25'} id={''}/>
+                            <Input inputRef={lnRef} label={'First Name'} type={'text'} valueRef={memberFirstName} className={'w-25'} id={''}/>
+                            <Input inputRef={miRef} label={'M.I'} type={'text'} valueRef={memberMiddleInitial} className={'w-25'} id={''}/>
+                            <button className="btn btn-danger" onClick={()=>{addMember()}}>Add Member</button>
+                        </div>
+                    </div>
+                    <div className="jcard-content">
+                            
+                    </div>
+                </div>
+                <div className="jcard member-list" style={{gridColumnStart: 1, gridColumnEnd: 2, gridRowStart: 2, gridRowEnd: 2}}>
+                    
+                    <div className="jcard-header" style={{borderBottom: '1px solid grey'}}>
+                        <p>Organization Members</p>
+                    </div>
+                    <div className="jcard-content">
+                        <table className='w-100'>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date Added</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentMembers.map((member)=>{
+                                    return <tr>
+                                        <td className="name">
+                                            <p>{member.last_name}, {member.first_name} {member.middle_initial}.</p>
+                                        </td>
+                                        <td className="date-added">
+                                            <p>{member.created_at.split("T")[0]}</p>
+                                        </td>
+                                    </tr>
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }

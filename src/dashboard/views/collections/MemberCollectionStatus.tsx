@@ -10,7 +10,7 @@ export interface MemberCollectionProp{
 
 function MemberCollectionStatus(props : MemberCollectionProp){
     const {name, collection_status, darken, collections} = props;
-    console.log(collection_status);
+    
     return ( 
         <>
             <tr className={darken ? "darken-row" : "white-row"}>
