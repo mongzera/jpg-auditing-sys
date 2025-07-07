@@ -14,9 +14,7 @@ export interface Member{
 }
 
 function OrganizationSettings(){
-    const memberLastName = useRef<string>("");
-    const memberFirstName = useRef<string>("");
-    const memberMiddleInitial = useRef<string>("");
+
     const fnRef = useRef<HTMLInputElement>(null);
     const lnRef = useRef<HTMLInputElement>(null);
     const miRef = useRef<HTMLInputElement>(null);
@@ -25,29 +23,31 @@ function OrganizationSettings(){
 
     const addMember = async() => {
         //validate input
-        memberLastName.current = memberLastName.current.trim();
-        memberFirstName.current = memberFirstName.current.trim();
-        memberMiddleInitial.current = memberMiddleInitial.current.trim();
+        let memberLastName = fnRef.current?.value.trim() ?? '';
+        let memberFirstName = lnRef.current?.value.trim() ?? '';
+        let memberMiddleInitial = miRef.current?.value.trim() ?? '';
+
+
 
         fnRef.current?.focus();
 
-        if(memberLastName.current.length < 2){
+        if(memberLastName.length < 2){
             alert('Last name must have at least 2 letters!');
             return;
         }
 
-        if(memberFirstName.current.length < 2){
+        if(memberFirstName.length < 2){
             alert('First name must have at least 2 letters!');
             return;
         }
 
-        if(memberMiddleInitial.current.length < 1){
-            alert('Last name must have at least 1 letters!');
+        if(memberMiddleInitial.length < 1){
+            alert('Middle Initial must have at least 1 letters!');
             return;
         }
 
-        if(memberMiddleInitial.current.length > 2){
-            alert('Last name must have at most 2 letters!');
+        if(memberMiddleInitial.length > 2){
+            alert('Middle Initial must have at most 2 letters!');
             return;
         }
 
@@ -63,34 +63,37 @@ function OrganizationSettings(){
         }
 
         let memberExists = false;
-        console.log(memberFirstName.current)
+        console.log(memberFirstName)
+
         existingMember.forEach((item : Member)=>{
-            let fn_match = item.first_name === memberFirstName.current;
-            let ln_match = item.last_name === memberLastName.current;
-            let mi_match = item.middle_initial === memberMiddleInitial.current;
+            let fn_match = item.first_name === memberFirstName;
+            let ln_match = item.last_name === memberLastName;
+            let mi_match = item.middle_initial === memberMiddleInitial;
 
             if(fn_match && ln_match && mi_match) memberExists = true;
         });
+
         console.log('member exists', memberExists)
+
         if(memberExists){
             alert("That member already exists!");
             return;
         }
 
         const {error} = await supabase.from('tb_organization_members').insert({
-            first_name : memberFirstName.current,
-            last_name : memberLastName.current,
-            middle_initial : memberMiddleInitial.current,
+            first_name : memberFirstName,
+            last_name : memberLastName,
+            middle_initial : memberMiddleInitial,
             organization_uuid : org_uuid
         });
 
-        memberFirstName.current = "";
-        memberLastName.current = "";
-        memberMiddleInitial.current = "";
+        memberFirstName = "";
+        memberLastName = "";
+        memberMiddleInitial = "";
         
-        if(!!fnRef.current) fnRef.current.value = memberFirstName.current;
-        if(!!lnRef.current) lnRef.current.value = memberLastName.current;
-        if(!!miRef.current) miRef.current.value = memberMiddleInitial.current;
+        if(!!fnRef.current) fnRef.current.value = memberFirstName;
+        if(!!lnRef.current) lnRef.current.value = memberLastName;
+        if(!!miRef.current) miRef.current.value = memberMiddleInitial;
 
         
 
@@ -133,9 +136,9 @@ function OrganizationSettings(){
                     <div className="jcard-header">
                         <h6>Add Member</h6>
                         <div className="add-member d-flex flex-row w-100 justify-content-between">
-                            <Input inputRef={fnRef} label={'Last Name'} type={'text'} valueRef={memberLastName} className={'w-25'} id={''}/>
-                            <Input inputRef={lnRef} label={'First Name'} type={'text'} valueRef={memberFirstName} className={'w-25'} id={''}/>
-                            <Input inputRef={miRef} label={'M.I'} type={'text'} valueRef={memberMiddleInitial} className={'w-25'} id={''}/>
+                            <Input inputRef={fnRef} label={'Last Name'} type={'text'} className={'w-25'} id={''}/>
+                            <Input inputRef={lnRef} label={'First Name'} type={'text'} className={'w-25'} id={''}/>
+                            <Input inputRef={miRef} label={'M.I'} type={'text'} className={'w-25'} id={''}/>
                             <button className="btn btn-danger" onClick={()=>{addMember()}}>Add Member</button>
                         </div>
                     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import Select from "../../../widgets/Select";
 import Input from "../../../widgets/Input";
 import SearchBar from "../../../widgets/SearchBar";
@@ -10,9 +10,6 @@ import { getUserOrgData } from "../../../utils/user-util";
 
 interface MembersToBeCollected{
     name : string,
-    or_number : number,
-    payment_method_account_name : string
-    date_paid : string
 }
 
 interface MemberCollectionInstance{
@@ -26,7 +23,6 @@ function RecordCollection(props : any){
 
     const collectionNameSelectRef = useRef<HTMLSelectElement>(null);
     const memberNameRef = useRef<string>("");
-    const paymentMethodRef = useRef<string>("");
 
     const [currentOrganizationCollections, setCurrentOrganizationCollections] = useState<OrganizationCollections[] | undefined>();
     const [membersToBeCollected, setMembersToBeCollected] = useState<MembersToBeCollected[]>([]);
@@ -35,11 +31,7 @@ function RecordCollection(props : any){
 
     const addMemberToBeCollected = () => {
         let newMember : MembersToBeCollected = {
-            
             name: memberNameRef.current,
-            or_number: membersToBeCollected!.length,
-            date_paid: "2025-6-3",
-            payment_method_account_name : 'Cash'
         }
 
         //clear search bar
@@ -71,12 +63,33 @@ function RecordCollection(props : any){
         return (
             <>
                 {membersToBeCollected?.map((member)=>{
+
+                    // const paymentMethodRef = useRef<HTMLSelectElement>(null)
+        
+                    // useEffect( ()=>{
+                    //     const handleValueChange = (e : ChangeEvent) =>{
+                    //         console.log((e.target as HTMLSelectElement).value)
+                    //     }
+
+                    //     paymentMethodRef.current?.addEventListener('change', (e) => handleValueChange);
+
+                    //     return ()=>{paymentMethodRef.current?.removeEventListener('change', (e) => handleValueChange);}
+                    // }, []);
+
+                    //TODO: Fix this issue...
+                    /**
+                     * Use MembersToBeCollectedInterface for this problem
+                     * I need to set these inputs below such as paymentMethod.
+                     * Each user will have varying payment methods and OR.Nos ...
+                     */
+
+
                     return (
                         <tr>
                             <td><h6>{member.name}</h6></td>
-                            <td><span className="d-flex flex-row align-items-center"><h6>OR No.</h6><input style={{maxWidth: '60px'}} type='text' defaultValue={member.or_number} /></span></td>
-                            <td><Select label={""} choices={organizationAccounts?.map((account)=>account.account_name)} valueRef={paymentMethodRef}/></td>
-                            <td><h6 style={{textAlign: 'center'}}>{member.date_paid}</h6></td>
+                            <td><span className="d-flex flex-row align-items-center"><h6>OR No.</h6><input style={{maxWidth: '60px'}} type='text' id={member.name + '-or-number'} /></span></td>
+                            <td><Select id={member.name + '-payment-method'} label={""} choices={organizationAccounts?.map((account)=>account.account_name)}/></td>
+                            <td><input type="date" name="" id={member.name + '-date-paid'} /></td>
                             <td><i className="bi bi-trash" style={{color: '#FF0000'}} onClick={()=>{deleteMember(member)}}></i></td>
                         </tr>
                     );
@@ -113,8 +126,36 @@ function RecordCollection(props : any){
     const submitCollection = () => {
         let membersForCollection : MemberCollectionInstance[] = [];
 
+        let failed = false;
+
         membersToBeCollected.map( (collectedMember) => {
+            if(failed) return;
+
             let member_uuid = currentMembers.find((member)=> collectedMember.name === (`${member.last_name}, ${member.first_name} ${member.middle_initial}.`))!.id;
+            const or_number = (document.getElementById(collectedMember.name + '-or-number') as HTMLInputElement).value;
+            const date_paid = (document.getElementById(collectedMember.name + '-date-paid') as HTMLInputElement).value;
+            const payment_method = (document.getElementById(collectedMember.name + '-payment-method') as HTMLInputElement).value;
+
+            //validate
+            if(!or_number){
+                //must be a number
+                failed = true;
+                alert(`OR No. for ${collectedMember.name} is invalid!`);
+                return;
+            }
+
+            if(!date_paid){
+                failed = true;
+                alert(`Payment Date specified for ${collectedMember.name} is invalid!`);
+                return;
+            }
+
+            if(!payment_method){
+                failed = true;
+                alert(`Payment Method for ${collectedMember.name} is invalid!`);
+                return;
+            }
+
 
             if(!member_uuid){
                 alert(`Error: System Glitch [User cannot be found ${collectedMember.name}]`);
@@ -124,14 +165,16 @@ function RecordCollection(props : any){
 
             let collectionInstance : MemberCollectionInstance = {
                 member_uuid: member_uuid,
-                payment_method: organizationAccounts!.find((account) => account.account_name === collectedMember.payment_method_account_name)!.uuid,
-                transaction_receipt: `OR No. ${collectedMember.or_number}`
+                payment_method: organizationAccounts!.find((account) => account.account_name === payment_method)!.uuid,
+                transaction_receipt: `OR No. ${or_number}`
             }
 
             membersForCollection.push(collectionInstance);
         });
 
         //clear inputs
+        if(failed) return;
+
         setMembersToBeCollected([]);
 
         submitBatchPayments(membersForCollection);
