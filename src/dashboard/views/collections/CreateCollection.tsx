@@ -13,7 +13,7 @@ function CreateCollection(props : CreateCollectionProps){
 
     const {refresh, setRefresh} = props;
 
-    const accountRef = useRef<string>('');
+    const accountSelectRef = useRef<HTMLSelectElement>(null);
     const collectionNameRef = useRef<HTMLInputElement>(null);
     const collectionDescriptionRef = useRef<HTMLInputElement>(null);
     const collectionAmountRef = useRef<HTMLInputElement>(null);
@@ -22,7 +22,7 @@ function CreateCollection(props : CreateCollectionProps){
     const createCollection = async () => {
         setRefresh((prev:number)=>prev+1);
 
-        if(!accountRef.current){
+        if(!accountSelectRef.current){
             alert("Selected account is invalid!");
             return;
         }
@@ -56,7 +56,7 @@ function CreateCollection(props : CreateCollectionProps){
 
         //insert
         const {error} = await supabase.from('tb_collections').insert( {
-            account_uuid : organizationAccounts?.find((account)=>account.account_name === accountRef.current)?.uuid,
+            account_uuid : organizationAccounts?.find((account)=>account.account_name === accountSelectRef.current?.value)?.uuid,
             collection_name : collectionName,
             collection_description : collectionDesc,
             collection_amount : collectionAmount
@@ -85,7 +85,7 @@ function CreateCollection(props : CreateCollectionProps){
             <div className="jcard" style={{gridColumnStart: 2, gridColumnEnd: 4, gridRowStart: 1, gridRowEnd: 1}}>
                 <div className="jcard-header d-flex flex-row justify-content-between align-items-center  h-25">
                     <h6>Create New Collection</h6>
-                    <Select label={"Set Account"} choices={organizationAccounts?.map((account)=>account.account_name)} valueRef={accountRef}/>
+                    <Select label={"Set Account"} choices={organizationAccounts?.map((account)=>account.account_name)} selectRef={accountSelectRef}/>
                 </div>
                 <div className="jcard-content h-75">
                     <div className="d-flex h-75 flex-column justify-content-around">
