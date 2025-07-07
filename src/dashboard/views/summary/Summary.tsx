@@ -148,11 +148,12 @@ function RecentTransaction( props : TransactionLog){
                         </div>
 
                         {props.entries.map((entry) => {
+
                             return (
                                 <>
                                     <div className="d-flex flex-row">
                                         <div className="d-flex w-50">
-                                            <p className='m-0'>{entry.account_name}</p>
+                                            <p className='m-0'> {entry.account_name}<b>{(!!entry.member_paid && entry.entry === 'DEBIT' ? ` (${entry.member_paid} ${entry.or_number})` : '')}</b> </p>
                                         </div>
                                         <div className="d-flex flex-row justify-content-between align-items-center w-50">
                                             <div className='d-flex w-50 justify-content-center'>

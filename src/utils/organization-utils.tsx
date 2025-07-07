@@ -12,7 +12,13 @@ export interface TransactionEntry{
     entry : string, //entry of transaction DEBIT | CREDIT
     amount : number, //amount in php
     account_name : string, // organization account name
-    account_normal_balance : string
+    account_normal_balance : string,
+    member_paid : string,
+    or_number : string,
+    payment_transaction : {
+        member_uuid : string,
+        transaction_receipt : string
+    }
 }
 
 export interface TransactionLog{
@@ -21,6 +27,7 @@ export interface TransactionLog{
     amount : number,
     created_at : string,
     entries : TransactionEntry[]
+    
 }
 
 export interface GeneralAccounts{
@@ -37,8 +44,10 @@ export interface OrganizationAccount{
 }
 
 export const fetchOrganizationTransactions = async () => {
-    const {data, error} = await supabase.from('tb_transaction_log').select('*, entries:tb_transaction_entries(id, account, entry, amount)').eq('organization_uuid', getUserOrgData()?.organization_id);
-            
+    const {data, error} = await supabase.from('tb_transaction_log').select('*, entries:tb_transaction_entries(*, payment_transaction:tb_paid_members (*))').eq('organization_uuid', getUserOrgData()?.organization_id);
+    
+    const members = await fetchOrganizationMembers();
+
     if(error){
         console.log(error.message);
         return;
@@ -46,6 +55,7 @@ export const fetchOrganizationTransactions = async () => {
 
     const orgChartOfAccounts = getOrganizationAccounts();
 
+    //console.log(data);
     const formattedTransactionLogs = data.map((item)=>{
         const formattedItem = item as TransactionLog
 
@@ -54,10 +64,22 @@ export const fetchOrganizationTransactions = async () => {
 
         formattedItem.entries.forEach((transact_entry)=>{
             const org_account = orgChartOfAccounts?.find(item=>item.uuid === transact_entry.account);
+
+            const isACollectionFromMember = !!transact_entry?.payment_transaction;
+            let memberName = '';
+            let orNumber = '';
+
+            if(isACollectionFromMember){
+                let mem = members!.find((member)=>member.id === transact_entry!.payment_transaction.member_uuid)
+                orNumber = transact_entry!.payment_transaction.transaction_receipt;
+                memberName = `${mem.last_name}, ${mem.first_name} ${mem.middle_initial}.`
+            }
         
             transact_entry.account_name = org_account!.account_name;
             transact_entry.account_type = org_account!.account_type;
             transact_entry.account_normal_balance = org_account!.account_normal_balance;
+            transact_entry.member_paid = memberName;
+            transact_entry.or_number = orNumber;
             (transact_entry.entry === 'DEBIT') ? debitBalance += transact_entry.amount : creditBalance += transact_entry.amount;
 
         });
