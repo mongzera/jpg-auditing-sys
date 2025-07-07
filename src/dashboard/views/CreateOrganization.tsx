@@ -8,18 +8,23 @@ import { fetchUserOrgData } from "../../utils/user-util";
 
 function CreateOrganization(props : any){
 
-    const organizationNameRef = useRef<string>("");
-    const organizationDescriptionRef = useRef<string>("");
-    const organizationAbbvRef = useRef<string>("");
+    const organizationNameInputRef = useRef<HTMLInputElement>(null);
+    const organizationDescriptionInputRef = useRef<HTMLInputElement>(null);
+    const organizationAbbvInputRef = useRef<HTMLInputElement>(null);
 
     const createOrganization = async() => {
         //validate all inputs
         const errors: string[] = [];
 
+        if(!organizationNameInputRef.current && !organizationDescriptionInputRef.current && !organizationAbbvInputRef.current){
+            alert("Technical Errors occured\nPlease refresh and retry...");
+            return;
+        }
+
         // Trim all input first
-        const name = organizationNameRef.current.trim();
-        const desc = organizationDescriptionRef.current.trim();
-        const abbv = organizationAbbvRef.current.trim();
+        const name = organizationNameInputRef.current!.value.trim();
+        const desc = organizationDescriptionInputRef.current!.value.trim();
+        const abbv = organizationAbbvInputRef.current!.value.trim();
 
         // 🔍 Validation rules
         if (!name) {
@@ -88,11 +93,11 @@ function CreateOrganization(props : any){
             <div className="background d-flex justify-content-center align-items-center p-0 m-0">
                 <div className="jcard jcard-medium w-50 h-50 p-5">
                     <h3 className="mb-5">Create Organization</h3>
-                    <Input className="w-100 my-5" label="Organization Name" type="text" valueRef={organizationNameRef}/>
-                    <Input className="w-100 my-5" label="Organization Description" type="text" valueRef={organizationDescriptionRef}/>
+                    <Input className="w-100 my-5" label="Organization Name" type="text" inputRef={organizationNameInputRef}/>
+                    <Input className="w-100 my-5" label="Organization Description" type="text" inputRef={organizationDescriptionInputRef}/>
                     
                     <div className="d-flex flex-row w-100 align-items-end justify-content-between">
-                        <Input className="w-50" label="Organization Abbreviation" type="text" valueRef={organizationAbbvRef}/>
+                        <Input className="w-50" label="Organization Abbreviation" type="text" inputRef={organizationAbbvInputRef}/>
                         
                     </div>
                     <div className="d-flex flex-row justify-content-end"> 

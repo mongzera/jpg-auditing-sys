@@ -6,7 +6,7 @@ interface InputProp{
     valueRef? : React.RefObject<string>,
     inputRef? : React.Ref<HTMLInputElement>
     className:string,
-    id:string,
+    id?:string,
     onChange?:Function,
     isAutoComplete? : boolean
 }

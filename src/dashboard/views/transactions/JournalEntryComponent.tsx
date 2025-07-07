@@ -12,10 +12,10 @@ const JournalEntryComponent = () => {
         const [transactionInstances, setTransactionInstances] = useState<TransactionUIProp[]>([]);
         const [balanced, setBalanced] = useState<boolean>(false);
         const [openNewAccountModal, setOpenNewAccountModal] = useState<boolean>(false);
-        const accountNameRef = useRef<string>("");
-        const entryRef = useRef<string>("")
-        const amountRef = useRef<string>("");
-        const transactionDescriptionRef = useRef<string>("");
+        const accountNameSelectRef = useRef<HTMLSelectElement>(null);
+        const entrySelectRef = useRef<HTMLSelectElement>(null);
+        const amountInputRef = useRef<HTMLInputElement>(null);
+        const transactionDescriptionInputRef = useRef<HTMLInputElement>(null);
         const [organizationAccountNames, setOrganizationAccountNames] = useState<string[]>();
         const [refresh, setRefresh] = useState<number>(0);
     
@@ -42,13 +42,13 @@ const JournalEntryComponent = () => {
                 <>
                     <div className='d-flex flex-row px-5 py-5'>
                         <div className="mx-2">
-                            <Select label='Select Account' choices={organizationAccountNames} valueRef={accountNameRef}></Select>
+                            <Select label='Select Account' choices={organizationAccountNames} selectRef={accountNameSelectRef}></Select>
                         </div>
                         <div className="mx-2">
-                            <Select label='Entry' choices={['DEBIT', 'CREDIT']} valueRef={entryRef}></Select>
+                            <Select label='Entry' choices={['DEBIT', 'CREDIT']} selectRef={entrySelectRef}></Select>
                         </div>
                         <div className="mx-2">
-                            <Input id='amount_input' label='Amount' type='text' valueRef={amountRef} className='jinput-200'></Input>
+                            <Input id='amount_input' label='Amount' type='text' inputRef={amountInputRef} className='jinput-200'></Input>
                         </div>
                     </div>
                 </>
@@ -56,24 +56,11 @@ const JournalEntryComponent = () => {
         }
 
         const clearModalInputs = () => {
-            accountNameRef.current = '';
-            entryRef.current = '';
-            amountRef.current = '';
-
-            const _amountInput = (document.getElementById('amount_input') as HTMLInputElement | null);
-            if(_amountInput){
-                _amountInput.value = '';
-                _amountInput.focus();
-            }
+            if(!!amountInputRef.current) amountInputRef.current!.value = '0';
         }
 
         const clearTransactionDescription = () =>{
-            transactionDescriptionRef.current = '';
-            const _descriptionInput = (document.getElementById('_journal_entry_transaction_input') as HTMLInputElement | null);
-            if(_descriptionInput){
-                _descriptionInput.value = '';
-                _descriptionInput.focus();
-            }
+            if(!!transactionDescriptionInputRef.current) transactionDescriptionInputRef.current.value = '';
         }
 
         const toggleNewEntryModal = () => {
@@ -86,25 +73,27 @@ const JournalEntryComponent = () => {
             const entryRegex = /^(CREDIT|DEBIT)$/; 
             const amountRegex = /^\d+(\.\d{1,2})?$/;
 
-            if(!accountNameRegex.test(accountNameRef.current)){
+            console.log(accountNameSelectRef.current!.value);
+
+            if(!accountNameRegex.test(accountNameSelectRef.current!.value)){
                 alert("Account Name invalid!");
                 return;
             }
 
-            if(!entryRegex.test(entryRef.current)){
+            if(!entryRegex.test(entrySelectRef.current!.value)){
                 alert("Entry is invalid! (CREDIT | DEBIT)");
                 return;
             }
 
-            if(!amountRegex.test(amountRef.current)){
+            if(!amountRegex.test(amountInputRef.current!.value)){
                 alert("Amount is invalid! No negative amount is allowed and only 2 decimal places");
                 return;
             }
 
             const transaction : TransactionUIProp = {
-                account_name : accountNameRef.current,
-                account_entry : entryRef.current,
-                account_amount : parseFloat(amountRef.current)
+                account_name : accountNameSelectRef.current!.value,
+                account_entry : entrySelectRef.current!.value,
+                account_amount : parseFloat(amountInputRef.current!.value)
             }
 
             setTransactionInstances( (prev) => [...prev, transaction]);
@@ -120,13 +109,13 @@ const JournalEntryComponent = () => {
         }
 
         const createTransaction = async() => {
-            if(!transactionDescriptionRef.current){
+            if(!transactionDescriptionInputRef.current!.value || !transactionDescriptionInputRef.current){
                 alert("Transaction Description must not be empty");
                 return;
             }
 
             const {data : transaction_log_data, error} = await supabase.from('tb_transaction_log').insert({
-                description : transactionDescriptionRef.current,
+                description : transactionDescriptionInputRef.current.value,
                 organization_uuid : getUserOrgData()?.organization_id
             }).select().single();
 
@@ -269,7 +258,7 @@ const JournalEntryComponent = () => {
                         
                     </table>
                     
-                    <Input id='_journal_entry_transaction_input' label='Transaction Description' className='w-100' type='text' valueRef={transactionDescriptionRef}/>
+                    <Input id='_journal_entry_transaction_input' label='Transaction Description' className='w-100' type='text' inputRef={transactionDescriptionInputRef}/>
                     
                 </div>
 

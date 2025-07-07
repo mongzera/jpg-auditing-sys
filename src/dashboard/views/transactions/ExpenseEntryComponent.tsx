@@ -14,15 +14,15 @@ const ExpenseEntryComponent = () => {
         const [openExpenseModal, setOpenExpenseModal] = useState<boolean>(false);
         const [hasExpenseAccount, setHasExpenseAccount] = useState<boolean>(false);
         
-        const expenseAccountRef = useRef<string>("");
-        const expenseAccountAmountRef = useRef<string>("");
+        const expenseAccountSelectRef = useRef<HTMLSelectElement>(null);
+        const expenseAccountAmountInputRef = useRef<HTMLInputElement>(null);
 
         const [openPaidWithModal, setOpenPaidWithModal] = useState<boolean>(false);
-        const paidWithAccountRef = useRef<string>("");
-        const paidWithAccountAmountRef = useRef<string>("");
+        const paidWithAccountSelectRef = useRef<HTMLSelectElement>(null);
+        const paidWithAccountAmountInputRef = useRef<HTMLInputElement>(null);
 
 
-        const transactionDescriptionRef = useRef<string>("");
+        const transactionDescriptionInputRef = useRef<HTMLInputElement>(null);
         const [organizationAccounts, setOrganizationAccounts] = useState<OrganizationAccount[] | null>();
         const [organizationAccountNames, setOrganizationAccountNames] = useState<string[]>();
         const [refresh, setRefresh] = useState<number>(0);
@@ -53,10 +53,10 @@ const ExpenseEntryComponent = () => {
                 <>
                     <div className='d-flex flex-row px-5 py-5'>
                         <div className="mx-2">
-                            <Select label='Select Account' choices={organizationAccountNames?.filter((name)=> organizationAccounts?.find((account)=> account.account_type === 'EXPENSE' && account.account_name === name))} valueRef={expenseAccountRef}></Select>
+                            <Select label='Select Account' choices={organizationAccountNames?.filter((name)=> organizationAccounts?.find((account)=> account.account_type === 'EXPENSE' && account.account_name === name))} selectRef={expenseAccountSelectRef}></Select>
                         </div>
                         <div className="mx-2">
-                            <Input id='_expense_amount_input' label='Amount' type='text' valueRef={expenseAccountAmountRef} className='jinput-200'></Input>
+                            <Input id='_expense_amount_input' label='Amount' type='text' inputRef={expenseAccountAmountInputRef} className='jinput-200'></Input>
                         </div>
                     </div>
                 </>
@@ -68,10 +68,10 @@ const ExpenseEntryComponent = () => {
                 <>
                     <div className='d-flex flex-row px-5 py-5'>
                         <div className="mx-2">
-                            <Select label='Select Account' choices={organizationAccountNames?.filter((name)=> organizationAccounts?.find((account)=> (account.account_type === 'ASSETS' || account.account_type === 'LIABILITY') && account.account_name === name))}  valueRef={paidWithAccountRef}></Select>
+                            <Select label='Select Account' choices={organizationAccountNames?.filter((name)=> organizationAccounts?.find((account)=> (account.account_type === 'ASSETS' || account.account_type === 'LIABILITY') && account.account_name === name))}  selectRef={paidWithAccountSelectRef}></Select>
                         </div>
                         <div className="mx-2">
-                            <Input id='_paid_with_amount_input' label='Amount' type='text' valueRef={paidWithAccountAmountRef} className='jinput-200'></Input>
+                            <Input id='_paid_with_amount_input' label='Amount' type='text' inputRef={paidWithAccountAmountInputRef} className='jinput-200'></Input>
                         </div>
                     </div>
                 </>
@@ -79,34 +79,15 @@ const ExpenseEntryComponent = () => {
         }
 
         const clearExpenseModalInputs = () => {
-            expenseAccountRef.current = '';
-            expenseAccountAmountRef.current = '';
-
-            const _amountInput = (document.getElementById('_expense_amount_input') as HTMLInputElement | null);
-            if(_amountInput){
-                _amountInput.value = '';
-                _amountInput.focus();
-            }
+            if(!!expenseAccountAmountInputRef.current) expenseAccountAmountInputRef.current!.value = '';
         }
 
         const clearPaidWithModalInputs = () => {
-            paidWithAccountRef.current = '';
-            paidWithAccountAmountRef.current = '';
-
-            const _amountInput = (document.getElementById('_paid_with_amount_input') as HTMLInputElement | null);
-            if(_amountInput){
-                _amountInput.value = '';
-                _amountInput.focus();
-            }
+            if(!!paidWithAccountAmountInputRef.current) paidWithAccountAmountInputRef.current!.value = '';
         }
 
         const clearTransactionDescription = () =>{
-            transactionDescriptionRef.current = '';
-            const _descriptionInput = (document.getElementById('_expense_transaction_input') as HTMLInputElement | null);
-            if(_descriptionInput){
-                _descriptionInput.value = '';
-                _descriptionInput.focus();
-            }
+            if(!!transactionDescriptionInputRef.current) transactionDescriptionInputRef.current!.value = '';
         }
 
         const toggleExpenseModal = () => {
@@ -132,22 +113,25 @@ const ExpenseEntryComponent = () => {
             const accountNameRegex = /^.{3,}$/;
             const amountRegex = /^\d+(\.\d{1,2})?$/;
 
-            if(!accountNameRegex.test(expenseAccountRef.current)){
+            if(!expenseAccountSelectRef.current || !expenseAccountAmountInputRef.current){
+                alert('Technical error occured, please refresh and retry...');
+                return;
+            }
+
+            if(!accountNameRegex.test(expenseAccountSelectRef.current!.value)){
                 alert("Account Name invalid!");
                 return;
             }
 
-
-
-            if(!amountRegex.test(expenseAccountAmountRef.current)){
+            if(!amountRegex.test(expenseAccountAmountInputRef.current!.value)){
                 alert("Amount is invalid! No negative amount is allowed and only 2 decimal places");
                 return;
             }
 
             const transaction : TransactionUIProp = {
-                account_name : expenseAccountRef.current,
+                account_name : expenseAccountSelectRef.current!.value,
                 account_entry : 'DEBIT',
-                account_amount : parseFloat(expenseAccountAmountRef.current)
+                account_amount : parseFloat(expenseAccountAmountInputRef.current!.value)
             }
 
             setHasExpenseAccount(true);
@@ -158,20 +142,25 @@ const ExpenseEntryComponent = () => {
             const accountNameRegex = /^.{3,}$/;
             const amountRegex = /^\d+(\.\d{1,2})?$/;
 
-            if(!accountNameRegex.test(paidWithAccountRef.current)){
+            if(!paidWithAccountAmountInputRef.current || !paidWithAccountAmountInputRef.current){
+                alert('Technical error occured, please refresh and retry...');
+                return;
+            }
+
+            if(!accountNameRegex.test(paidWithAccountSelectRef.current!.value)){
                 alert("Account Name invalid!");
                 return;
             }
 
-            if(!amountRegex.test(paidWithAccountAmountRef.current)){
+            if(!amountRegex.test(paidWithAccountAmountInputRef.current!.value)){
                 alert("Amount is invalid! No negative amount is allowed and only 2 decimal places");
                 return;
             }
 
             const transaction : TransactionUIProp = {
-                account_name : paidWithAccountRef.current,
+                account_name : paidWithAccountSelectRef.current!.value,
                 account_entry : 'CREDIT',
-                account_amount : parseFloat(paidWithAccountAmountRef.current)
+                account_amount : parseFloat(paidWithAccountAmountInputRef.current!.value)
             }
 
             setTransactionInstances( (prev) => [...prev, transaction]);
@@ -187,13 +176,13 @@ const ExpenseEntryComponent = () => {
         }
 
         const createTransaction = async() => {
-            if(!transactionDescriptionRef.current){
+            if(!transactionDescriptionInputRef.current && !transactionDescriptionInputRef.current!.value){
                 alert("Transaction Description must not be empty");
                 return;
             }
 
             const {data : transaction_log_data, error} = await supabase.from('tb_transaction_log').insert({
-                description : transactionDescriptionRef.current,
+                description : transactionDescriptionInputRef.current!.value,
                 organization_uuid : getUserOrgData()?.organization_id
             }).select().single();
 
@@ -350,7 +339,7 @@ const ExpenseEntryComponent = () => {
                         
                     </table>
                     
-                    <Input id='_expense_transaction_input' label='Transaction Description' className='w-100' type='text' valueRef={transactionDescriptionRef}/>
+                    <Input id='_expense_transaction_input' label='Transaction Description' className='w-100' type='text' inputRef={transactionDescriptionInputRef}/>
                     
                 </div>
 

@@ -242,9 +242,6 @@ function RecordCollection(props : any){
                         <div className="submit w-100 d-flex justify-content-end mt-5">
                             <button className="btn btn-danger" onClick={()=>{submitCollection()}}>Submit Collection</button>
                         </div>
-                        <div className="submit w-100 d-flex justify-content-end mt-5">
-                            <button className="btn btn-danger" onClick={()=>{submitCollection()}}>Submit Collection</button>
-                        </div>
                     </div>
                 </div>
             </div>

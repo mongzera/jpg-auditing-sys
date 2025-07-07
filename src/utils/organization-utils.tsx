@@ -1,3 +1,4 @@
+import type { MemberCollectionPaymentStatus, OrganizationCollections } from "../dashboard/views/collections/Collections";
 import { supabase } from "../supabase";
 import { getUserOrgData } from "./user-util";
 
@@ -117,26 +118,28 @@ export const fetchOrganizationMembers = async() => {
 
 export const fetchCollections = async () => {
     const org_uuid = await getUserOrgData()?.organization_id;
-    const {data : collections, error} = await supabase.from('tb_collections').select('*, tb_organization_account (*)').eq('tb_organization_account.organization_id', org_uuid);
-
+    const { data : collections, error } = await supabase.rpc('get_collections_by_org', { organization_uuid: org_uuid});
     if(error){
         console.error(error.message);
         return;
     }
 
-    return collections;
+    console.log(collections);
+
+    return collections as OrganizationCollections[];
 }
 
 export const fetchMemberCollectionStatus = async () => {
     const org_uuid = await getUserOrgData()?.organization_id;
-    const {data : collection_status, error} = await supabase.from('tb_paid_members').select('*, tb_organization_members (*)').eq('tb_organization_members.organization_uuid', org_uuid);
+
+    const { data : collection_status, error } = await supabase.rpc('get_paid_members', { organization_uuid: org_uuid});
 
     if(error){
         console.error(error.message);
         return;
     }
 
-    return collection_status;
+    return collection_status as MemberCollectionPaymentStatus[];
 }
 
 export const getGeneralAccounts = () => {

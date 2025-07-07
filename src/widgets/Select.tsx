@@ -25,7 +25,7 @@ function Select(props:SelectProp){
     return (
         <div className="jselect">
             <h6>{label}</h6>
-            <select id={id} name="label" ref={selectRef} onChange={(e)=>{ if(valueRef?.current){valueRef.current = e.target.options[e.target.selectedIndex].value;} console.log('value change: ' + e.target.options[e.target.selectedIndex].value)}}>
+            <select id={id} name="label" ref={selectRef} onChange={(e)=>{ if(!!valueRef) {valueRef!.current = e.target.options[e.target.selectedIndex].value;} console.log('value change: ' + e.target.options[e.target.selectedIndex].value)}}>
                 {choices!.map( (item)=>{
                     return <option value={item}>{item}</option>
                 })}

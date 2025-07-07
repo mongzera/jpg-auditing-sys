@@ -18,8 +18,8 @@ interface OrganizationAccountBalance{
 }
 
 function Accounts(){
-    const newAccountNameRef = useRef<string>("");
-    const newAccountTypeRef = useRef<string>("");
+    const newAccountNameInputRef = useRef<HTMLInputElement>(null);
+    const newAccountTypeSelectRef = useRef<HTMLSelectElement>(null);
 
     const [displayNewOrgAccountModal, setDisplayNewOrgAccountModal] = useState<boolean>(false)
     const [organizationAccounts, setOrganizationAccounts] = useState<OrganizationAccount[] | null>([]);
@@ -79,9 +79,9 @@ function Accounts(){
             return;
         }
 
-        console.log('creating: ' + newAccountNameRef.current, newAccountTypeRef.current);
-        const accountName = newAccountNameRef.current.trim();
-        const accountType = newAccountTypeRef.current.trim();
+        console.log('creating: ' + newAccountNameInputRef.current, newAccountTypeSelectRef.current);
+        const accountName = newAccountNameInputRef.current!.value.trim();
+        const accountType = newAccountTypeSelectRef.current!.value.trim();
 
         if(accountName.length < 3){
             alert("Account name must atleast have 3 letters!")
@@ -164,8 +164,8 @@ function Accounts(){
             content={
             <>
                 <div className="d-flex flex-row align-items-center justify-content-around p-3">
-                    <div className="m-3"><Input id='account_name_input' className={'jinput-200'} label='Account Name' type='text' valueRef={newAccountNameRef}/></div>
-                    <div className="m-3"><Select label='Account Type' valueRef={newAccountTypeRef} choices={accountTypeNames??[]} /></div>
+                    <div className="m-3"><Input id='account_name_input' className={'jinput-200'} label='Account Name' type='text' inputRef={newAccountNameInputRef}/></div>
+                    <div className="m-3"><Select label='Account Type' selectRef={newAccountTypeSelectRef} choices={accountTypeNames??[]} /></div>
                 </div>
             </>
             }/>
@@ -194,7 +194,7 @@ function Accounts(){
                 <div className="jcard jcard-large p-4" style={{gridColumnStart:1, gridColumnEnd:4, gridRowStart:2, gridRowEnd:2}}>
                     <div className="jcard-header d-flex flex-row justify-content-between align-items-center">
                         <h6>Chart of Accounts</h6>
-                        <button className='btn btn-secondary' onClick={()=>{newAccountNameRef.current = ""; newAccountTypeRef.current = ""; setDisplayNewOrgAccountModal(true)}}>Create Account</button>
+                        <button className='btn btn-secondary' onClick={()=>{if(!!newAccountNameInputRef.current){newAccountNameInputRef.current!.value = "";} setDisplayNewOrgAccountModal(true)}}>Create Account</button>
                     </div>
                     <div className="jcard-content">
                         <table className='jtable'>
