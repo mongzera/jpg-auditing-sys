@@ -141,7 +141,25 @@ function RecentTransaction( props : TransactionLog){
     useEffect( ()=>{
         if(!divRef.current) return;
 
-        if(expanded) divRef.current!.style.height = divRef.current?.scrollHeight + 150 + 'px';
+        if(expanded) {
+
+            //clone the target 
+            let divClone = divRef.current.cloneNode(true) as HTMLDivElement;
+            divClone.id = 'clone';
+            divClone.style.height = 'min-content';
+            divClone.style.position = "absolute";  // remove from layout flow
+            divClone.style.visibility = "hidden";  // hide it
+            divClone.style.whiteSpace = "nowrap"; 
+            
+            divRef.current.appendChild(divClone);
+
+            const height = divClone.scrollHeight + 50;
+
+            divRef.current.removeChild(divClone);
+
+            divRef.current!.style.height = height + 'px';
+
+        }
         else divRef.current!.style.height = '0px';
     }, [expanded]);
 
